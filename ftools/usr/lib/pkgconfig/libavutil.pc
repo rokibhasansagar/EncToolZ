@@ -5,7 +5,7 @@ includedir=${prefix}/include
 
 Name: libavutil
 Description: FFmpeg utility library
-Version: 57.26.100
+Version: 57.27.100
 Requires: 
 Requires.private: 
 Conflicts:
