@@ -2,12 +2,12 @@
 .\"     Title: mkvmerge
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 2022-08-14
+.\"      Date: 2022-10-09
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 70.0.0
+.\"    Source: MKVToolNix 71.1.0
 .\"  Language: English
 .\"
-.TH "MKVMERGE" "1" "2022\-08\-14" "MKVToolNix 70\&.0\&.0" "User Commands"
+.TH "MKVMERGE" "1" "2022\-10\-09" "MKVToolNix 71\&.1\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -1653,6 +1653,18 @@ SBR
 then you can add \*(Aq:0\*(Aq to the track ID\&.
 .RE
 .PP
+\fB\-\-audio\-emphasis\fR \fITID:n|symbolic\-name\fR
+.RS 4
+Sets the emphasis for the audio track with the track ID
+\fITID\fR\&. The mode can either be a number
+\fIn\fR
+(certain values between
+\fB0\fR
+and
+\fB16\fR) or a symbolic name\&. All valid numbers & symbolic names can be listed with the
+\fB\-\-list\-audio\-emphasis\fR option\&.
+.RE
+.PP
 \fB\-\-reduce\-to\-core\fR \fITID\fR
 .RS 4
 Some audio codecs have a lossy core and optional extensions that implement lossless decoding\&. This option tells
@@ -1983,7 +1995,7 @@ Sets the field order for the video track with the track ID
 \fB14\fR: interlaced with top field displayed first and bottom field stored first
 .RE
 .PP
-\fB\-\-stereo\-mode\fR \fITID:n|keyword\fR
+\fB\-\-stereo\-mode\fR \fITID:n|symbolic\-name\fR
 .RS 4
 Sets the stereo mode for the video track with the track ID
 \fITID\fR\&. The mode can either be a number
@@ -1992,9 +2004,8 @@ between
 \fB0\fR
 and
 \fB14\fR
-or one of these keywords:
-.sp
-\*(Aqmono\*(Aq, \*(Aqside_by_side_left_first\*(Aq, \*(Aqtop_bottom_right_first\*(Aq, \*(Aqtop_bottom_left_first\*(Aq, \*(Aqcheckerboard_right_first\*(Aq, \*(Aqcheckerboard_left_first\*(Aq, \*(Aqrow_interleaved_right_first\*(Aq, \*(Aqrow_interleaved_left_first\*(Aq, \*(Aqcolumn_interleaved_right_first\*(Aq, \*(Aqcolumn_interleaved_left_first\*(Aq, \*(Aqanaglyph_cyan_red\*(Aq, \*(Aqside_by_side_right_first\*(Aq, \*(Aqanaglyph_green_magenta\*(Aq, \*(Aqboth_eyes_laced_left_first\*(Aq, \*(Aqboth_eyes_laced_right_first\*(Aq\&.
+or a symbolic name\&. All valid numbers & names can be listed with the
+\fB\-\-list\-stereo\-modes\fR option\&.
 .RE
 .SS "Options that only apply to text subtitle tracks"
 .PP
@@ -2065,7 +2076,7 @@ The
 json
 format outputs a machine\-readable JSON representation\&. This format follows the JSON schema described in the following file:
 .sp
-\m[blue]\fBmkvmerge\-identification\-output\-schema\-v16\&.json\fR\m[]\&\s-2\u[3]\d\s+2
+\m[blue]\fBmkvmerge\-identification\-output\-schema\-v17\&.json\fR\m[]\&\s-2\u[3]\d\s+2
 .sp
 All versions of the JSON schema are available both online and in the released source code archives\&.
 .RE
@@ -2079,9 +2090,11 @@ File types such as MPEG program and transport streams (\&.vob,
 If tracks are known to be present but not found then the percentage to probe can be changed with this option\&. The minimum of 10 MB is built\-in and cannot be changed\&.
 .RE
 .PP
-\fB\-l\fR, \fB\-\-list\-types\fR
+\fB\-\-list\-audio\-emphasis\fR
 .RS 4
-Lists supported input file types\&.
+Lists all valid numbers & their corresponding symbolic names for the
+\fB\-\-audio\-emphasis\fR
+option\&.
 .RE
 .PP
 \fB\-\-list\-languages\fR
@@ -2089,6 +2102,18 @@ Lists supported input file types\&.
 Lists all languages and their ISO 639\-2 code which can be used with the
 \fB\-\-language\fR
 option\&.
+.RE
+.PP
+\fB\-\-list\-stereo\-modes\fR
+.RS 4
+Lists all valid numbers & their corresponding symbolic names for the
+\fB\-\-stereo\-mode\fR
+option\&.
+.RE
+.PP
+\fB\-l\fR, \fB\-\-list\-types\fR
+.RS 4
+Lists supported input file types\&.
 .RE
 .PP
 \fB\-\-priority\fR \fIpriority\fR
@@ -3690,9 +3715,9 @@ the IANA homepage
 \%https://www.iana.org/assignments/media-types/
 .RE
 .IP " 3." 4
-mkvmerge-identification-output-schema-v16.json
+mkvmerge-identification-output-schema-v17.json
 .RS 4
-\%https://mkvtoolnix.download/doc/mkvmerge-identification-output-schema-v16.json
+\%https://mkvtoolnix.download/doc/mkvmerge-identification-output-schema-v17.json
 .RE
 .IP " 4." 4
 RFC 7159
