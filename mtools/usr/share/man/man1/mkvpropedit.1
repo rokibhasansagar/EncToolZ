@@ -2,12 +2,12 @@
 .\"     Title: mkvpropedit
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 2023-03-26
+.\"      Date: 2023-04-30
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 75.0.0
+.\"    Source: MKVToolNix 76.0
 .\"  Language: English
 .\"
-.TH "MKVPROPEDIT" "1" "2023\-03\-26" "MKVToolNix 75\&.0\&.0" "User Commands"
+.TH "MKVPROPEDIT" "1" "2023\-04\-30" "MKVToolNix 76\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -579,6 +579,44 @@ followed by the existing attachment\*(Aqs MIME type\&. If this selector is used 
 then colons within the MIME type to match must be escaped as
 \ec\&.
 .RE
+.SH "LANGUAGE HANDLING"
+.PP
+\fBmkvpropedit\fR(1)
+mostly tries to do the right thing by default\&. Therefore changes to the
+\fBlanguage\fR
+property will cause
+\fBmkvpropedit\fR(1)
+to apply the same change to both the new "LanguageIETF" element as well as the old "Language" element similar to how
+\fBmkvmerge\fR(1)
+applies the language to both elements\&. For example, when using
+mkvpropedit movie\&.mkv \-\-edit track:2 \-\-set language=zh\-TW
+the "LanguageIETF" element will be set to
+zh\-TW
+and the old "Language" element to
+chi\&.
+.PP
+Additionally there\*(Aqs a new track header property named
+\fBlanguage\-ietf\fR
+that can be set or removed\&. Changes to this property only apply to the new "LanguageIETF" track header element\&. A caveat is that the old "Language" track header element is a mandatory element in Matroska \(em meaning even if it isn\*(Aqt present in the file it still has an implied value\&. When the user only sets the
+\fBlanguage\-ietf\fR
+property but not the
+\fBlanguage\fR
+property,
+\fBmkvpropedit\fR(1)
+will therefore add the old "Language" element in certain cases & set it to
+und
+(meaning "undetermined") as the user didn\*(Aqt specify a value for it\&.
+.PP
+When reading XML chapter or tag files
+\fBmkvpropedit\fR(1)
+works like
+\fBmkvmerge\fR(1)
+does\&.
+.PP
+The creation of the new elements can be disabled completely with the command\-line option `\-\-disable\-language\-ietf` which operates on all three new elements\&.
+.PP
+You can chose the normalization method applied to extended language sub\-tags with the parameter
+\fB\-\-normalize\-language\-ietf\fR\&.
 .SH "EXAMPLES"
 .PP
 The following example edits a file called \*(Aqmovie\&.mkv\*(Aq\&. It sets the segment title and modifies the language code of an audio and a subtitle track\&. Note that this example can be shortened by leaving out the first

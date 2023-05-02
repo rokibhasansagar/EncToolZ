@@ -2,12 +2,12 @@
 .\"     Title: mkvmerge
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 2023-03-26
+.\"      Date: 2023-04-30
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 75.0.0
+.\"    Source: MKVToolNix 76.0
 .\"  Language: English
 .\"
-.TH "MKVMERGE" "1" "2023\-03\-26" "MKVToolNix 75\&.0\&.0" "User Commands"
+.TH "MKVMERGE" "1" "2023\-04\-30" "MKVToolNix 76\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -574,6 +574,11 @@ Enables normalizing all IETF BCP 47 language tags to either their canonical form
 In the canonical form all subtags for which preferred values exist are replaced by those preferred values\&. This converts e\&.g\&. \*(Aqzh\-yue\-jyutping\*(Aq to \*(Aqyue\-jyutping\*(Aq or \*(Aqfr\-FX\*(Aq to \*(Aqfr\-FR\*(Aq\&.
 .sp
 For the extended language subtags form the canonical form is built first\&. Afterwards all primary languages for which an extended language subtag exists are replaced by that extended language subtag and its prefix\&. This converts e\&.g\&. \*(Aqyue\-jyutping\*(Aq back to \*(Aqzh\-yue\-jyutping\*(Aq but has no effect on \*(Aqfr\-FR\*(Aq as \*(Aqfr\*(Aq is not an extended language subtag\&.
+.RE
+.PP
+\fB\-\-stop\-after\-video\-ends\fR
+.RS 4
+Stops processing after the primary video track ends, discarding any remaining packets of other tracks\&.
 .RE
 .SS "File splitting, linking, appending and concatenation (more global options)"
 .PP
@@ -1567,15 +1572,6 @@ or if it isn\*(Aqt present\&. This flag can be set if the track contains comment
 This option can be used multiple times for an input file applying to several tracks by selecting different track IDs each time\&.
 .RE
 .PP
-\fB\-\-blockadd\fR \fITID:level\fR
-.RS 4
-Keep only the
-BlockAdditions
-up to the level
-\fIlevel\fR
-for the given track\&. The default is to keep all levels\&. This option only affects certain kinds of codecs like WAVPACK4\&.
-.RE
-.PP
 \fB\-\-track\-name\fR \fITID:name\fR
 .RS 4
 Sets the track name for the given track (see section
@@ -2076,7 +2072,7 @@ The
 json
 format outputs a machine\-readable JSON representation\&. This format follows the JSON schema described in the following file:
 .sp
-\m[blue]\fBmkvmerge\-identification\-output\-schema\-v17\&.json\fR\m[]\&\s-2\u[3]\d\s+2
+\m[blue]\fBmkvmerge\-identification\-output\-schema\-v18\&.json\fR\m[]\&\s-2\u[3]\d\s+2
 .sp
 All versions of the JSON schema are available both online and in the released source code archives\&.
 .RE
@@ -2745,6 +2741,35 @@ option uses this special ID\&. As an alternative to
 the option
 \fB\-\-chapter\-sync \&...\fR
 can be used\&.
+.SH "LANGUAGE HANDLING"
+.PP
+Matroska(TM)
+has support for two different types of language elements: the old, deprecated "Language" element containing ISO 639\-2 alpha 3 codes and the new "LanguageIETF" tags containing IETF BCP 47 language tags\&. All of
+\fBmkvmerge\fR(1)\*(Aqs options that accept a language accept a BCP 47 language tag\&.
+\fBmkvmerge\fR(1)
+will derive the value for the deprecated "Language" element from the BCP 47 language tags wherever possible\&.
+.PP
+When identifying a file in JSON mode, existing "LanguageIETF" track header elements will be output as the
+language_ietf
+track property\&.
+.PP
+When writing a file
+\fBmkvmerge\fR(1)
+will always write the "LanguageIETF", "ChapLanguageIETF" and "TagLanguageIETF" elements (the latter two only if chapters or tags are written respectively)\&. In addition to those elements the corresponding old elements will be written; they\*(Aqll be set to the ISO 639\-2 code portion of the BCP 47 language tag\&. For example, when the track language is set to
+sr\-Cyrl\-RS
+"LanguageIETF" will be set to
+sr\-Cyrl\-RS
+and the old "Language" element will be set to
+srp\&.
+.PP
+When reading existing files (Matroska files, XML chapter or tag files etc\&.) that already contain "\&...LanguageIETF" elements the existing elements will be kept\&. Otherwise "\&...LanguageIETF" elements will be added based on command\-line options and other existing deprecated "\&...Language" elements\&.
+.PP
+The creation of the new elements can be disabled completely with the command\-line option
+\fB\-\-disable\-language\-ietf\fR
+which operates on all three new elements\&.
+.PP
+You can chose the normalization method applied to extended language sub\-tags with the parameter
+\fB\-\-normalize\-language\-ietf\fR\&.
 .SH "TEXT FILES AND CHARACTER SET CONVERSIONS"
 .if n \{\
 .sp
@@ -3715,9 +3740,9 @@ the IANA homepage
 \%https://www.iana.org/assignments/media-types/
 .RE
 .IP " 3." 4
-mkvmerge-identification-output-schema-v17.json
+mkvmerge-identification-output-schema-v18.json
 .RS 4
-\%https://mkvtoolnix.download/doc/mkvmerge-identification-output-schema-v17.json
+\%https://mkvtoolnix.download/doc/mkvmerge-identification-output-schema-v18.json
 .RE
 .IP " 4." 4
 RFC 7159
