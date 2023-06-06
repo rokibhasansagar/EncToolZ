@@ -2,12 +2,12 @@
 .\"     Title: mkvmerge
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 2023-04-30
+.\"      Date: 2023-06-04
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 76.0
+.\"    Source: MKVToolNix 77.0
 .\"  Language: English
 .\"
-.TH "MKVMERGE" "1" "2023\-04\-30" "MKVToolNix 76\&.0" "User Commands"
+.TH "MKVMERGE" "1" "2023\-06\-04" "MKVToolNix 77\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -451,6 +451,8 @@ below for details\&.
 \fB\-\-track\-order\fR \fIFID1:TID1,FID2:TID2,\&.\&.\&.\fR
 .RS 4
 This option changes the order in which the tracks for an input file are created\&. The argument is a comma separated list of pairs IDs\&. Each pair contains first the file ID (\fIFID1\fR) which is simply the number of the file on the command line starting at 0\&. The second is a track ID (\fITID1\fR) from that file\&. If some track IDs are omitted then those tracks are created after the ones given with this option have been created\&.
+.sp
+If this option isn\*(Aqt given, tracks will be sorted by their type first & the order of their source file second\&. Video tracks come first followed by audio & subtitle tracks\&. Other rarely used track types come last\&.
 .RE
 .PP
 \fB\-\-cluster\-length\fR \fIspec\fR
