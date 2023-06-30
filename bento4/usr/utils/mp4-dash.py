@@ -462,7 +462,7 @@ def OutputDash(options, set_attributes, audio_sets, video_sets, subtitles_sets, 
             AddDescriptor(adaptation_set, set_attributes, 'video', None)
 
             # setup content protection
-            if options.encryption_key or options.marlin or options.playready or options.widevine:
+            if options.encryption_key or options.eme_signaling or options.marlin or options.playready or options.widevine or options.clearkey or options.primetime:
                 AddContentProtection(options, adaptation_set, video_tracks, all_audio_tracks + all_video_tracks)
 
             if options.on_demand:
@@ -519,7 +519,7 @@ def OutputDash(options, set_attributes, audio_sets, video_sets, subtitles_sets, 
             AddDescriptor(adaptation_set, set_attributes, 'audio/' + language, 'audio')
 
             # setup content protection
-            if options.encryption_key or options.marlin or options.playready or options.widevine:
+            if options.encryption_key or options.eme_signaling or options.marlin or options.playready or options.widevine or options.clearkey or options.primetime:
                 AddContentProtection(options, adaptation_set, audio_tracks, all_audio_tracks + all_video_tracks)
 
             if options.on_demand:
@@ -558,12 +558,7 @@ def OutputDash(options, set_attributes, audio_sets, video_sets, subtitles_sets, 
                     else:
                         scheme_id_uri = DOLBY_AC4_AUDIO_CHANNEL_CONFIGURATION_SCHEME_ID_URI
                 else:
-                    # detect the actual number of channels
-                    sample_description = audio_track.info['sample_descriptions'][0]
-                    if 'mpeg_4_audio_decoder_config' in sample_description:
-                        audio_channel_config_value = str(sample_description['mpeg_4_audio_decoder_config']['channels'])
-                    else:
-                        audio_channel_config_value = str(audio_track.channels)
+                    audio_channel_config_value = str(audio_track.channels)
                     scheme_id_uri = MPEG_DASH_AUDIO_CHANNEL_CONFIGURATION_SCHEME_ID_URI if options.use_legacy_audio_channel_config_uri else ISO_IEC_23001_8_AUDIO_CHANNEL_CONFIGURATION_SCHEME_ID_URI
                 xml.SubElement(representation,
                                'AudioChannelConfiguration',
