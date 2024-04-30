@@ -2,12 +2,12 @@
 .\"     Title: mkvmerge
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2024-03-10
+.\"      Date: 2024-04-28
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 83.0
+.\"    Source: MKVToolNix 84.0
 .\"  Language: English
 .\"
-.TH "MKVMERGE" "1" "2024\-03\-10" "MKVToolNix 83\&.0" "User Commands"
+.TH "MKVMERGE" "1" "2024\-04\-28" "MKVToolNix 84\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -1433,6 +1433,15 @@ Don\*(Aqt copy attachments from this file\&.
 \fB\-\-no\-global\-tags\fR
 .RS 4
 Don\*(Aqt copy global tags from this file\&.
+.RE
+.PP
+\fB\-\-regenerate\-track\-uids\fR
+.RS 4
+When this option is used for a Matroska source file,
+\fBmkvmerge\fR(1)
+will create new random unique track IDs instead of keeping the existing ones in the file\&. Existing track UIDs in chapters & tags read from the same file will be remapped to the newly generated values\&.
+.sp
+This behavior is enabled automatically for Matroska files created by the MakeMKV software\&. The reason is that MakeMKV uses consecutive numbers (1, 2, 3\&...) as UIDs instead of generating random ones\&.
 .RE
 .PP
 \fB\-y\fR, \fB\-\-sync\fR \fITID:d\fR\fI[,o[/p]]\fR
