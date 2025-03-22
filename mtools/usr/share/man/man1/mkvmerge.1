@@ -2,12 +2,12 @@
 .\"     Title: mkvmerge
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2024-10-19
+.\"      Date: 2025-03-16
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 88.0
+.\"    Source: MKVToolNix 91.0
 .\"  Language: English
 .\"
-.TH "MKVMERGE" "1" "2024\-10\-19" "MKVToolNix 88\&.0" "User Commands"
+.TH "MKVMERGE" "1" "2025\-03\-16" "MKVToolNix 91\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -2259,6 +2259,22 @@ Reads additional command line arguments from the file
 \fIoptions\-file\fR\&. See the section about
 option files
 for further information\&.
+.sp
+If you want to use the
+@
+sign as the first character in the argument to an option such as \*(Aq\-\-title\*(Aq, you have to escape it with a second
+@
+sign\&. Example:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ mkvmerge \-o midnight\-s01e01\&.mkv \-\-title @@midnight midnight\-s01e01\&.mp4
+.fi
+.if n \{\
+.RE
+.\}
 .RE
 .PP
 \fB\-\-capabilities\fR
