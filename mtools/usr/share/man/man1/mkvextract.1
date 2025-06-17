@@ -2,12 +2,12 @@
 .\"     Title: mkvextract
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2025-04-26
+.\"      Date: 2025-06-14
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 92.0
+.\"    Source: MKVToolNix 93.0
 .\"  Language: English
 .\"
-.TH "MKVEXTRACT" "1" "2025\-04\-26" "MKVToolNix 92\&.0" "User Commands"
+.TH "MKVEXTRACT" "1" "2025\-06\-14" "MKVToolNix 93\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -265,6 +265,11 @@ is used\&. If no chapters are found in the file, the output file is not created\
 .PP
 Syntax:
 \fBmkvextract \fR\fB\fIsource\-filename\fR\fR\fB \fR\fB\fBtags\fR\fR\fB \fR\fB[\fIoptions\fR]\fR\fB \fR\fB\fIoutput\-filename\&.xml\fR\fR
+.PP
+\fB\-T\fR, \fB\-\-no\-track\-tags\fR
+.RS 4
+Exports only tags that aren\*(Aqt track\-specific\&.
+.RE
 .PP
 The tags are written to specified output file in the
 XML
