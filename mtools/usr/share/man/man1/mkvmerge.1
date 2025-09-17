@@ -2,12 +2,12 @@
 .\"     Title: mkvmerge
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2025-07-27
+.\"      Date: 2025-09-14
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 94.0
+.\"    Source: MKVToolNix 95.0
 .\"  Language: English
 .\"
-.TH "MKVMERGE" "1" "2025\-07\-27" "MKVToolNix 94\&.0" "User Commands"
+.TH "MKVMERGE" "1" "2025\-09\-14" "MKVToolNix 95\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -355,6 +355,8 @@ You can control the format used by the start timestamp with
 \(en nanoseconds with up to nine places (e\&.g\&. three places with
 %3n)
 .RE
+.sp
+The string \*(Aq<TITLE>\*(Aq is only filled when generating chapters for appended files\&. It\*(Aqll be replaced by the appended file\*(Aqs title if one is present\&.
 .RE
 .PP
 \fB\-\-cue\-chapter\-name\-format\fR \fIformat\fR
@@ -539,6 +541,25 @@ which can be specified for each input file\&.
 By default
 \fBmkvmerge\fR(1)
 sets the "date" segment information field to the time & date when multiplexing started\&. With this option that field is not written at all\&.
+.RE
+.PP
+\fB\-\-date\fR \fItimestamp\fR
+.RS 4
+Sets the
+DateUTC
+field written to the segment information\&. The timestamp must be ISO 8601\-like:
+YYYY\-mm\-ddTHH:MM:SSZ
+for UTC or with an offset
+\(+-HH:MM
+(a space instead of
+T
+is also accepted), e\&.g\&.
+2017\-03\-28T17:28:00Z
+or
+2017\-03\-28 17:28:00+02:00\&. If used together with
+\fB\-\-no\-date\fR,
+\fB\-\-no\-date\fR
+takes precedence and no date will be written\&.
 .RE
 .PP
 \fB\-\-disable\-lacing\fR
