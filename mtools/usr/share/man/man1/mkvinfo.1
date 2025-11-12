@@ -2,12 +2,12 @@
 .\"     Title: mkvinfo
 .\"    Author: Moritz Bunkus <moritz@bunkus.org>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2025-09-14
+.\"      Date: 2025-11-08
 .\"    Manual: User Commands
-.\"    Source: MKVToolNix 95.0
+.\"    Source: MKVToolNix 96.0
 .\"  Language: English
 .\"
-.TH "MKVINFO" "1" "2025\-09\-14" "MKVToolNix 95\&.0" "User Commands"
+.TH "MKVINFO" "1" "2025\-11\-08" "MKVToolNix 96\&.0" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -116,6 +116,11 @@ Writes all messages to the file
 instead of to the console\&. While this can be done easily with output redirection there are cases in which this option is needed: when the terminal reinterprets the output before writing it to a file\&. The character set set with
 \fB\-\-output\-charset\fR
 is honored\&.
+.RE
+.PP
+\fB\-\-no\-bom\fR
+.RS 4
+Normally text files that are created & encoded in one of the UTF variants will start with a byte order marker (BOM)\&. Using this option disables writing that byte order marker\&.
 .RE
 .PP
 \fB\-\-ui\-language\fR \fIcode\fR
