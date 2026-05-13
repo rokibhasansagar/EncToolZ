@@ -108,12 +108,12 @@ public:
     virtual void StartObject(const char* /* name */, unsigned int field_count = 0, bool compact = false) {}
     virtual void EndObject() {}
     virtual void AddField(const char* /* name */,
-                          AP4_UI64    /* value */, 
+                          AP4_UI64    /* value */,
                           FormatHint  hint = HINT_NONE) {
         (void)hint; // gcc warning
     }
-    virtual void AddFieldF(const char* /* name */, 
-                           float       /* value */, 
+    virtual void AddFieldF(const char* /* name */,
+                           float       /* value */,
                            FormatHint  hint = HINT_NONE) {
         (void)hint; // gcc warning
     }

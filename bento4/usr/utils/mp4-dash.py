@@ -106,6 +106,8 @@ WIDEVINE_SCHEME_ID_URI      = 'urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed'
 PRIMETIME_PSSH_SYSTEM_ID    = 'f239e769efa348509c16a903c6932efb'
 PRIMETIME_SCHEME_ID_URI     = 'urn:uuid:F239E769-EFA3-4850-9C16-A903C6932EFB'
 
+FAIRPLAY_SCHEME_ID_URI      = 'urn:uuid:94ce86fb-07ff-4f43-adb8-93d2fa968ca2'
+
 MPEG_COMMON_ENCRYPTION_SCHEME_ID_URI = 'urn:mpeg:dash:mp4protection:2011'
 
 EME_COMMON_ENCRYPTION_PSSH_SYSTEM_ID = '1077efecc0b24d02ace33c1e52e2fb4b'
@@ -126,6 +128,8 @@ DASHIF_NAMESPACE            = 'https://dashif.org/'
 
 DASH_DEFAULT_ROLE_NAMESPACE = 'urn:mpeg:dash:role:2011'
 
+SCTE_NAMESPACE              = 'urn:scte:dash:scte214-extensions'
+
 DASH_MEDIA_SEGMENT_URL_PATTERN_SMOOTH = "/QualityLevels($Bandwidth$)/Fragments(%s=$Time$)"
 DASH_MEDIA_SEGMENT_URL_PATTERN_HIPPO  = '%s/Bitrate($Bandwidth$)/Fragment($Time$)'
 
@@ -138,6 +142,10 @@ MPEG_DASH_AUDIO_CHANNEL_CONFIGURATION_SCHEME_ID_URI       = 'urn:mpeg:dash:23003
 ISO_IEC_23001_8_AUDIO_CHANNEL_CONFIGURATION_SCHEME_ID_URI = 'urn:mpeg:mpegB:cicp:ChannelConfiguration'
 DOLBY_DIGITAL_AUDIO_CHANNEL_CONFIGURATION_SCHEME_ID_URI   = 'tag:dolby.com,2014:dash:audio_channel_configuration:2011'
 DOLBY_AC4_AUDIO_CHANNEL_CONFIGURATION_SCHEME_ID_URI       = 'tag:dolby.com,2015:dash:audio_channel_configuration:2015'
+
+MPEG_DASH_MATRIX_COEFFICIENTS_SCHEME_ID_URI      = 'urn:mpeg:mpegB:cicp:MatrixCoefficients'
+MPEG_DASH_COLOUR_PRIMARIES_SCHEME_ID_URI         = 'urn:mpeg:mpegB:cicp:ColourPrimaries'
+MPEG_DASH_TRANSFER_CHARACTERISTICS_SCHEME_ID_URI = 'urn:mpeg:mpegB:cicp:TransferCharacteristics'
 
 ISOFF_MAIN_PROFILE          = 'urn:mpeg:dash:profile:isoff-main:2011'
 ISOFF_LIVE_PROFILE          = 'urn:mpeg:dash:profile:isoff-live:2011'
@@ -368,6 +376,11 @@ def AddContentProtection(options, container, tracks, all_tracks):
             pssh = xml.SubElement(cp, '{' + CENC_2013_NAMESPACE + '}pssh')
             pssh.text = pssh_b64
 
+    # FairPlay
+    if options.fairplay:
+        container.append(xml.Comment(' FairPlay '))
+        xml.SubElement(container, 'ContentProtection', schemeIdUri=FAIRPLAY_SCHEME_ID_URI)
+
 #############################################
 def AddDescriptor(adaptation_set, set_attributes, set_name, category_name):
     attributes = set_attributes.get(set_name)
@@ -462,7 +475,7 @@ def OutputDash(options, set_attributes, audio_sets, video_sets, subtitles_sets, 
             AddDescriptor(adaptation_set, set_attributes, 'video', None)
 
             # setup content protection
-            if options.encryption_key or options.eme_signaling or options.marlin or options.playready or options.widevine or options.clearkey or options.primetime:
+            if options.encryption_key or options.eme_signaling or options.marlin or options.playready or options.widevine or options.clearkey or options.primetime or options.fairplay:
                 AddContentProtection(options, adaptation_set, video_tracks, all_audio_tracks + all_video_tracks)
 
             if options.on_demand:
@@ -478,15 +491,50 @@ def OutputDash(options, set_attributes, audio_sets, video_sets, subtitles_sets, 
                 AddSegmentTemplate(options, adaptation_set, init_segment_url, media_segment_url_template_prefix, video_tracks[0], 'video')
 
             for video_track in video_tracks:
-                representation = xml.SubElement(adaptation_set,
-                                                'Representation',
-                                                id=video_track.representation_id,
-                                                codecs=video_track.codec,
-                                                width=str(video_track.width),
-                                                height=str(video_track.height),
-                                                scanType=video_track.scan_type,
-                                                frameRate=video_track.frame_rate_ratio,
-                                                bandwidth=str(video_track.bandwidth))
+                if hasattr(video_track, 'supplemental_codec') and hasattr(video_track, 'supplemental_profile'):
+                    #adding MatrixCoefficients
+                    if hasattr(video_track, 'matrix_coefficients'):
+                        xml.SubElement(adaptation_set,
+                                       'EssentialProperty',
+                                       schemeIdUri=MPEG_DASH_MATRIX_COEFFICIENTS_SCHEME_ID_URI,
+                                       value=video_track.matrix_coefficients)
+
+                    #adding ColourPrimaries
+                    if hasattr(video_track, 'colour_primaries'):
+                        xml.SubElement(adaptation_set,
+                                       'EssentialProperty',
+                                       schemeIdUri=MPEG_DASH_COLOUR_PRIMARIES_SCHEME_ID_URI,
+                                       value=video_track.colour_primaries)
+
+                    #adding TransferCharacteristics
+                    if hasattr(video_track, 'transfer_characteristics'):
+                        xml.SubElement(adaptation_set,
+                                       'EssentialProperty',
+                                       schemeIdUri=MPEG_DASH_TRANSFER_CHARACTERISTICS_SCHEME_ID_URI,
+                                       value=video_track.transfer_characteristics)
+
+                    representation = xml.SubElement(adaptation_set,
+                                                    'Representation',
+                                                    id=video_track.representation_id,
+                                                    codecs=video_track.codec.split(',')[0],
+                                                    width=str(video_track.width),
+                                                    height=str(video_track.height),
+                                                    scanType=video_track.scan_type,
+                                                    frameRate=video_track.frame_rate_ratio,
+                                                    bandwidth=str(video_track.bandwidth))
+                    xml.register_namespace('scte214', SCTE_NAMESPACE)
+                    representation.set('{'+SCTE_NAMESPACE+'}supplementalCodecs', video_track.supplemental_codec)
+                    representation.set('{'+SCTE_NAMESPACE+'}supplementalProfiles', video_track.supplemental_profile)
+                else:
+                    representation = xml.SubElement(adaptation_set,
+                                                    'Representation',
+                                                    id=video_track.representation_id,
+                                                    codecs=video_track.codec,
+                                                    width=str(video_track.width),
+                                                    height=str(video_track.height),
+                                                    scanType=video_track.scan_type,
+                                                    frameRate=video_track.frame_rate_ratio,
+                                                    bandwidth=str(video_track.bandwidth))
                 if hasattr(video_track, 'max_playout_rate'):
                     representation.set('maxPlayoutRate', video_track.max_playout_rate)
 
@@ -519,7 +567,7 @@ def OutputDash(options, set_attributes, audio_sets, video_sets, subtitles_sets, 
             AddDescriptor(adaptation_set, set_attributes, 'audio/' + language, 'audio')
 
             # setup content protection
-            if options.encryption_key or options.eme_signaling or options.marlin or options.playready or options.widevine or options.clearkey or options.primetime:
+            if options.encryption_key or options.eme_signaling or options.marlin or options.playready or options.widevine or options.clearkey or options.primetime or options.fairplay:
                 AddContentProtection(options, adaptation_set, audio_tracks, all_audio_tracks + all_video_tracks)
 
             if options.on_demand:
@@ -1864,6 +1912,8 @@ def main():
                            "The <primetime-data> argument can be either: " +
                            "(1) the character '@' followed by the name of a file containing the Primetime Metadata to use, or "
                            "(2) the character '#' followed by the Primetime Metadata encoded in Base64")
+    parser.add_option('', "--fairplay", dest="fairplay", action="store_true", default=False,
+                      help="Add FairPlay signaling to the MPD (requires an encrypted input, or the --encryption-key option)")
     parser.add_option('', "--fairplay-key-uri", dest="fairplay_key_uri",
                       help="Specify the key URI to use for FairPlay Streaming key delivery (only valid with --hls option)")
     parser.add_option('', "--clearkey", dest="clearkey", action="store_true",
@@ -1969,6 +2019,10 @@ def main():
 
     if options.primetime_metadata:
         options.primetime = True
+
+    if options.fairplay:
+        if options.encryption_key and options.encryption_cenc_scheme != 'cbcs':
+            raise Exception('--fairplay requires --encryption-cenc-scheme=cbcs')
 
     if options.fairplay_key_uri:
         if not options.hls:
